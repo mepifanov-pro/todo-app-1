@@ -1,23 +1,56 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from 'react'
+import TodoForm from './components/TodoForm'
+import Todo from './components/Todo'
 
-function App() {
+const App = () => {
+  const [todos, setTodos] = useState([]);
+
+  const addTask = (userInput) => {
+    if (userInput) {
+      const newItem = {
+        id: Date.now(),
+        task: userInput,
+        complete: false
+      }
+      setTodos([...todos, newItem])
+    }
+  }
+
+  const removeTask = (id) => {
+    // setTodos([...todos.filter((todo) => todo.id !== id)]);
+
+    const newList = todos.filter(todo => todo.id !== id);
+    setTodos(newList);
+  }
+
+  const handleToggle = (id) => {
+    // setTodos([
+    //   ...todos.map((todo) => 
+    //     todo.id === id ? { ...todo, complete: !todo.complete } : {...todo }
+    //   )
+    // ]);
+
+    const index = todos.findIndex(todo => todo.id === id);
+    todos[index].complete = !todos[index].complete;
+    setTodos([...todos]);
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Список задач: {todos.length}</h1>
+
+      <TodoForm addTask={addTask} />
+ 
+      {todos.map((todo) => {
+        return (
+          <Todo
+          key={todo.id}
+            todo={todo}
+            toggleTask={handleToggle}
+            removeTask={removeTask}
+          />
+        )
+      })}
     </div>
   );
 }
